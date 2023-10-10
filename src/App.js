@@ -1,25 +1,27 @@
-import logo from './logo.svg';
+import TypeAhead from './TypeAhead/TypeAhead';
 import './App.css';
+import { Box } from '@mui/material';
 
 function App() {
+
+  const handleSelect = (selectedItem) => {
+    console.log("selected item: ", selectedItem);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box className="app" sx={styles.app}>
+      <TypeAhead onSelect={handleSelect} multipleSelections={false} />
+    </Box>
   );
 }
+
+const styles = {
+  app: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    margin: '0 30px'
+  }
+};
 
 export default App;
