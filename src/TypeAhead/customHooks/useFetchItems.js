@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { getItemsFromAPI } from "../api/api";
 
+const DEBOUNCE_WAIT_TIME = 500;
+
 const useFetchItems = (
   inputValue,
   setSuggestions,
@@ -9,6 +11,8 @@ const useFetchItems = (
   selectedItems,
   multipleSelections
 ) => {
+  let debounceTimer;
+
   useEffect(() => {
     if (!multipleSelections && selectedItems.length) {
       return;
@@ -38,7 +42,17 @@ const useFetchItems = (
       }
     };
 
-    fetchSuggestions();
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+
+    debounceTimer = setTimeout(fetchSuggestions, DEBOUNCE_WAIT_TIME);
+
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    };
   }, [inputValue, setSuggestions, setIsLoading, setShowSuggestions, selectedItems, multipleSelections]);
 };
 
