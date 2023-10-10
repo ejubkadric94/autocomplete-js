@@ -8,7 +8,7 @@ import useFetchItems from './customHooks/useFetchItems';
 
 import './TypeAhead.css';
 
-const Typeahead = ({ placeholder = 'Search for ...', onSelect, multipleSelections = true, ...props }) => {
+const Typeahead = ({ placeholder = 'Search for ...', onSelect, multipleSelections = true, className, ...props }) => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -40,6 +40,7 @@ const Typeahead = ({ placeholder = 'Search for ...', onSelect, multipleSelection
         aria-expanded={showSuggestions}
         ref={inputRef}
         disabled={!multipleSelections && selectedItems.length === 1}
+        className={className}
         {...props}
       />
       <Popover parentRef={inputRef} hide={!showSuggestions} onHide={() => setShowSuggestions(false)}>

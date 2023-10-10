@@ -9,8 +9,8 @@ function App() {
   };
 
   return (
-    <Box className="app" sx={styles.app}>
-      <TypeAhead onSelect={handleSelect} multipleSelections={false} />
+    <Box className="app" data-testid="app" sx={styles.app}>
+      <TypeAhead onSelect={handleSelect} />
     </Box>
   );
 }

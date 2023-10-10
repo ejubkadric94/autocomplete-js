@@ -1,7 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getItemsFromAPI } from "../api/api";
 
 const DEBOUNCE_WAIT_TIME = 500;
+
+const apiCache = {};
+
+const getItemsFromAPIWithCache = async (apiUrl, inputValue) => {
+  const cacheKey = `${apiUrl}${inputValue}`;
+  
+  if (apiCache[cacheKey]) {
+    console.log('Cache found for key: ', cacheKey);
+    return apiCache[cacheKey];
+  }
+
+  console.log('No cache found, making a request...');
+  const data = await getItemsFromAPI(apiUrl, inputValue);
+
+  apiCache[cacheKey] = data;
+
+  return data;
+};
 
 const useFetchItems = (
   inputValue,
@@ -11,7 +29,7 @@ const useFetchItems = (
   selectedItems,
   multipleSelections
 ) => {
-  let debounceTimer;
+  const debounceTimerRef = useRef(null);
 
   useEffect(() => {
     if (!multipleSelections && selectedItems.length) {
@@ -30,7 +48,7 @@ const useFetchItems = (
       setShowSuggestions(true);
 
       try {
-        const data = await getItemsFromAPI('https://test.com/', inputValue);
+        const data = await getItemsFromAPIWithCache('https://test.com/name=', inputValue);
 
         const matchingItems = data.filter((suggestion) => !selectedItems.some(item => item.id === suggestion.id));
   
@@ -42,15 +60,15 @@ const useFetchItems = (
       }
     };
 
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
 
-    debounceTimer = setTimeout(fetchSuggestions, DEBOUNCE_WAIT_TIME);
+    debounceTimerRef.current = setTimeout(fetchSuggestions, DEBOUNCE_WAIT_TIME);
 
     return () => {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
     };
   }, [inputValue, setSuggestions, setIsLoading, setShowSuggestions, selectedItems, multipleSelections]);
